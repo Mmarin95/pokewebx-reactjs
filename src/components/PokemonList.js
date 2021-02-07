@@ -2,7 +2,7 @@ import React from "react";
 
 export default function PokemonList({ pokemonList }) {
   return (
-    <div>
+    <div className="pokemon-list">
       <ul>
         {pokemonList.map((poke) => (
           <li key={poke.name}>
