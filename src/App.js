@@ -41,7 +41,9 @@ export default function App() {
 
   return (
     <>
-      <SearchBar BASE_URL={BASE_URL} totalPokemons={totalPokemons} />
+      {totalPokemons && (
+        <SearchBar BASE_URL={BASE_URL} totalPokemons={totalPokemons} />
+      )}
       <PokemonList pokemonList={pokemonList} />
       <Pagination
         goToPrevPage={prevPageUrl ? goToPrevPage : null}
