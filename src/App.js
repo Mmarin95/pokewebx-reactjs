@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import PokemonList from "./components/PokemonList";
 import Pagination from "./components/Pagination";
+import SearchBar from "./components/SearchBar";
 import axios from "axios";
 import "./App.css";
 
@@ -12,8 +13,6 @@ export default function App() {
   const [nextPageUrl, setNextPageUrl] = useState();
   const [prevPageUrl, setPrevPageUrl] = useState();
   const [loading, setLoading] = useState();
-
-  const [pokemonsNameList, setPokemonsNameList] = useState();
 
   useEffect(() => {
     let doCancel;
@@ -35,28 +34,6 @@ export default function App() {
     return () => doCancel();
   }, [currentPageUrl]);
 
-/*   
-
-  FIXME:  
-  totalPokemons variable 
-  in the first useEffect, we assign totalPokemons with setTotalPokemons 
-  setTotalPokemons is async so the second useEffect below can't access to totalPokemons variable
-
-  use totalPokemons to set the ?limit={totalPokemons}
-*/ 
-  useEffect(() => {
-    const pokeNames = localStorage.getItem("pokemonsNameList");
-    if (pokeNames) {
-      setPokemonsNameList(pokeNames.split(","));
-    } else {
-      axios.get(BASE_URL + "?limit=3000").then((res) => {
-        const pokeNames = res.data.results.map((result) => result.name);
-        setPokemonsNameList(pokeNames);
-        localStorage.setItem("pokemonsNameList", pokeNames);
-      });
-    }
-  }, []);
-
   const goToPrevPage = () => setCurrentPageUrl(prevPageUrl);
   const goToNextPage = () => setCurrentPageUrl(nextPageUrl);
 
@@ -64,6 +41,7 @@ export default function App() {
 
   return (
     <>
+      <SearchBar BASE_URL={BASE_URL} totalPokemons={totalPokemons} />
       <PokemonList pokemonList={pokemonList} />
       <Pagination
         goToPrevPage={prevPageUrl ? goToPrevPage : null}
