@@ -5,13 +5,15 @@ import axios from "axios";
 import "./App.css";
 
 const BASE_URL = "https://pokeapi.co/api/v2/pokemon";
-function App() {
+export default function App() {
   const [pokemonList, setPokemonList] = useState([]);
   const [totalPokemons, setTotalPokemons] = useState();
   const [currentPageUrl, setCurrentPageUrl] = useState(BASE_URL);
   const [nextPageUrl, setNextPageUrl] = useState();
   const [prevPageUrl, setPrevPageUrl] = useState();
   const [loading, setLoading] = useState();
+
+  const [pokemonsNameList, setPokemonsNameList] = useState();
 
   useEffect(() => {
     let doCancel;
@@ -33,10 +35,33 @@ function App() {
     return () => doCancel();
   }, [currentPageUrl]);
 
+/*   
+
+  FIXME:  
+  totalPokemons variable 
+  in the first useEffect, we assign totalPokemons with setTotalPokemons 
+  setTotalPokemons is async so the second useEffect below can't access to totalPokemons variable
+
+  use totalPokemons to set the ?limit={totalPokemons}
+*/ 
+  useEffect(() => {
+    const pokeNames = localStorage.getItem("pokemonsNameList");
+    if (pokeNames) {
+      setPokemonsNameList(pokeNames.split(","));
+    } else {
+      axios.get(BASE_URL + "?limit=3000").then((res) => {
+        const pokeNames = res.data.results.map((result) => result.name);
+        setPokemonsNameList(pokeNames);
+        localStorage.setItem("pokemonsNameList", pokeNames);
+      });
+    }
+  }, []);
+
   const goToPrevPage = () => setCurrentPageUrl(prevPageUrl);
   const goToNextPage = () => setCurrentPageUrl(nextPageUrl);
 
   if (loading) return "Loading...";
+
   return (
     <>
       <PokemonList pokemonList={pokemonList} />
@@ -47,5 +72,3 @@ function App() {
     </>
   );
 }
-
-export default App;
