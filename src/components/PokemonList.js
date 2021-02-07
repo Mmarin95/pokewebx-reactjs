@@ -5,7 +5,9 @@ export default function PokemonList({ pokemonList }) {
     <div>
       <ul>
         {pokemonList.map((poke) => (
-          <li key={poke.name}>{poke.name}</li>
+          <li key={poke.name}>
+            <a href={poke.url}>{poke.name}</a>
+          </li>
         ))}
       </ul>
     </div>
