@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import PokemonList from "./components/PokemonList";
 import Pagination from "./components/Pagination";
 import SearchBar from "./components/SearchBar";
-import axios from "axios";
 import "./App.css";
 
 const BASE_URL = "https://pokeapi.co/api/v2/pokemon";
@@ -15,23 +14,17 @@ export default function App() {
   const [loading, setLoading] = useState();
 
   useEffect(() => {
-    let doCancel;
     setLoading(true);
-    axios
-      .get(currentPageUrl, {
-        // CancelToken returns a Token which is already a function to cancel calls.
-        cancelToken: new axios.CancelToken((c) => (doCancel = c)),
-      })
-      .then((res) => {
+    fetch(currentPageUrl)
+      .then((response) => response.json())
+      .then((data) => {
         setLoading(false);
-        const { count, next, previous, results } = res.data;
+        const { count, next, previous, results } = data;
         setTotalPokemons(count);
         setPrevPageUrl(previous);
         setNextPageUrl(next);
         setPokemonList(results);
       });
-    // Calls every time useEffect is called, so it cleans old running requests.
-    return () => doCancel();
   }, [currentPageUrl]);
 
   const goToPrevPage = () => setCurrentPageUrl(prevPageUrl);
